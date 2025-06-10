@@ -6,13 +6,16 @@ import threading
 import json
 import os
 import time
+import queue
 from panel import launch_gui
+
 
 mic_device = 1
 vcable_device = 7
 headphones = 5
 stream_active = True
 volume = 1.0
+injected_audio = queue.Queue()
 
 with open("soundslist.json", "r", encoding="utf-8") as f:
     sound_data = json.load(f)["sets"]
@@ -46,38 +49,52 @@ def mic_loop():
     def callback(indata, outdata, frames, time_info, status):
         if not stream_active:
             outdata[:] = np.zeros_like(outdata)
+        elif not injected_audio.empty():
+            try:
+                chunk = injected_audio.get_nowait()
+                if chunk.shape[0] < frames:
+                    chunk = np.pad(chunk, (0, frames - chunk.shape[0]))
+                outdata[:] = chunk[:frames].reshape(-1, 1)
+            except queue.Empty:
+                outdata[:] = indata
         else:
             outdata[:] = indata
 
     with sd.Stream(device=(mic_device, vcable_device),
                    samplerate=44100, channels=1,
-                   dtype='float32', callback=callback):
+                   dtype='float32', callback=callback,
+                   blocksize=1024):
         while True:
-            time.sleep(0.1)
+            time.sleep(0.01)
+
 
 def play_sound(index):
-    global current_set, stream_active
+    global current_set
     try:
         file = get_sound_path(index)
         if not os.path.exists(file):
             print(f"Plik nie istnieje: {file}")
             return
         print(f"[SET {current_set}] Odtwarzam: {get_sound_name(index)} -> {file}")
-        stream_active = False
         if gui:
             gui.set_indicator(True)
-        time.sleep(0.1)
         data, fs = sf.read(file, dtype='float32')
-        #data *= volume
-        sd.play(data, fs, device=vcable_device)
+        if data.ndim > 1:
+            data = data.mean(axis=1)  # zamień stereo na mono
+
+        # Wstaw dane do kolejki jako kawałki (np. po 1024 próbki)
+        chunk_size = 1024
+        for i in range(0, len(data), chunk_size):
+            injected_audio.put(data[i:i+chunk_size])
+
+        # Odtwórz również lokalnie (headphones)
         sd.play(data, fs, device=headphones)
         sd.wait()
-        time.sleep(0.05)
-        stream_active = True
         if gui:
             gui.set_indicator(False)
     except Exception as e:
         print(f"Błąd: {e}")
+
 
 def switch_set():
     global current_set
