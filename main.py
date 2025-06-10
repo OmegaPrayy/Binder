@@ -68,7 +68,7 @@ def play_sound(index):
             gui.set_indicator(True)
         time.sleep(0.1)
         data, fs = sf.read(file, dtype='float32')
-        data *= volume
+        #data *= volume
         sd.play(data, fs, device=vcable_device)
         sd.play(data, fs, device=headphones)
         sd.wait()
