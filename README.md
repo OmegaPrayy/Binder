@@ -3,7 +3,7 @@ Binder for the programing dacks.
 
 Jak działą:
 Po odpaleniu popatrz w konsole jak ci wypisuje twój mikrofon i kabel np.
-'
+```
 Soundboard aktywny! Numpad 1–9 = dźwięki, Numpad 0 = zmień SET, ESC = wyjście.
    0 Mapowanie dźwięku Microsoft - Input, MME (2 in, 0 out)
 >  1 Microphone (LCS_USB_Audio), MME (1 in, 0 out)
@@ -18,13 +18,13 @@ Soundboard aktywny! Numpad 1–9 = dźwięki, Numpad 0 = zmień SET, ESC = wyjś
 CABLE Input (VB-Audio Virtual C, MME (0 in, 16 out) 
 Tego szukasz żeby przekierować dzwięk na wirtualny kabel, Skąd to mieć? 
 -> https://vb-audio.com/Cable/index.htm  <- Tutaj macie wirtalizację kabla
-'
+```
 W edycji to nas interesuje 
 # KONFIG
-'
+```
 mic_device = 1  # <-- ID mikrofonu fizycznego
 vcable_device = 7# <-- ID VB-CABLE Output
-'
+```
 mic_device - twój mikrofon ( kto by się spodziewał po nazwie)
 vcable_device - twój kabel wirtualny  ( patrz nawias wyrzej)
 
@@ -36,8 +36,9 @@ możesz sobie wybierać z listy który set żeby nie przeklikiwać po koleji wsz
 
 A i na koniec potrzebny jest do dodania plik .json który przetrzymóje ścieżki do dzwięków, stwóż go pustego koło main.py i jest
 Jego stróktóra 
+```
 {
    "sets":{
    }
 }   
-
+```
