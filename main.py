@@ -11,7 +11,7 @@ from panel import launch_gui
 
 
 mic_device = 1
-vcable_device = 7
+vcable_device = 8
 headphones = 5
 stream_active = True
 volume = 1.0
