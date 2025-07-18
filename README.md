@@ -32,32 +32,10 @@ na panelu graficznym masz wyświetlone pola od 1-9 to są reprezentacje klawiszy
 możesz tworzyć nowe SET'y czyli nowe klawiatury albo usówać (tak jest to w nieskonczoność możliwe ale podzielone na 9 klawiszy)
 możesz sobie wybierać z listy który set żeby nie przeklikiwać po koleji wszystkich aby dojść do n-tego
 
-A i na koniec potrzebny jest do dodania plik .json który przetrzymóje ścieżki do dzwięków
-jego stróktóra wygląda tak
+A i na koniec potrzebny jest do dodania plik .json który przetrzymóje ścieżki do dzwięków, stwóż go pustego koło main.py i jest
+Jego stróktóra 
 {
-    "sets": {
-        "0": [
-            {
-                "name": "1.mp3",
-                "file": ""
-            {
-                "name": "among-us-role-reveal-sound.mp3",
-                "file": ""
-            },
-            {
-                "name": "Trąbka",
-                "file": "sounds/trabka.wav"
-            }
-        ],
-        "1": [
-            {
-                "name": "Aplauz",
-                "file": "sounds/aplauz.wav"
-            },
-            {
-                "name": "Boing",
-                "file": "sounds/boing.wav"
-            }
-        ]
-    }
-}
+   "sets":{
+   }
+}   
+
