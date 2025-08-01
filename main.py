@@ -7,6 +7,7 @@ import json
 import os
 import time
 import queue
+import threading
 from panel import launch_gui
 
 
@@ -42,8 +43,10 @@ numpad_binds = {
     79: 0, 80: 1, 81: 2,
     75: 3, 76: 4, 77: 5,
     71: 6, 72: 7, 73: 8,
-    82: 'switch'
+    82: 'switch', # Numpad 0
+    74: 'stop'  # Numpad "-"
 }
+
 
 def mic_loop():
     def callback(indata, outdata, frames, time_info, status):
@@ -82,6 +85,8 @@ def play_sound(index):
         if data.ndim > 1:
             data = data.mean(axis=1)  # zamień stereo na mono
 
+        # Dostosowywanie głośnośności z wartością z suwaka volume_slider z panel.py
+        data = data * volume
         # Wstaw dane do kolejki jako kawałki (np. po 1024 próbki)
         chunk_size = 1024
         for i in range(0, len(data), chunk_size):
@@ -95,6 +100,14 @@ def play_sound(index):
     except Exception as e:
         print(f"Błąd: {e}")
 
+def stop_playback():
+    global injected_audio
+    # Clear the audio queue
+    with injected_audio.mutex:
+        injected_audio.queue.clear()
+    # Stop any currently playing sound
+    sd.stop()
+    print("Playback stopped, microphone stream resumed.")
 
 def switch_set():
     global current_set
@@ -110,8 +123,10 @@ def on_key(event):
         action = numpad_binds.get(event.scan_code)
         if action == 'switch':
             switch_set()
+        elif action == 'stop':
+            stop_playback()
         elif isinstance(action, int):
-            play_sound(action)
+            threading.Thread(target=play_sound, args=(action,), daemon=True).start()
 
 def update_sound(index, file_path):
     name = os.path.basename(file_path)

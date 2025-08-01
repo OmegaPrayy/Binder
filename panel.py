@@ -95,7 +95,9 @@ class SoundboardGUI:
     def _on_delete_set(self):
         self.delete_set_callback()
 
-
+    def _on_volume_changed(self, v):
+        print("Slider value:", v)
+        self.set_volume_callback(float(v))
 
 
 def launch_gui(get_current_set_callback, update_sound_callback, set_volume_callback, set_ids, set_current_set_callback, add_set_callback, delete_set_callback):
